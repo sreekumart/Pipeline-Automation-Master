@@ -1,0 +1,91 @@
+pipeline {
+    agent any
+	environment {
+		FILEPATH = "/c/Users/Stuliche/Desktop/JenkinsFile/Pipeline-Automation-Master/scripts"
+		//WINDOWSPATH can be commented when used in unix machines.Use a unix equivalent then.
+		FLAGCHECKPATH = "C:/Users/Stuliche/Desktop/JenkinsFile/Pipeline-Automation-Master/scripts"
+		LENA08KEYPATH = "/c/Users/Stuliche/.jenkins/privatekey/secret.key"
+	}
+stages{
+        stage('DTFILEPP'){
+			when {
+				expression {
+					sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTFILEPP' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTFILEPP"
+					RESULT=readFile("${env.FLAGCHECKPATH}/DTFILEPP").trim()
+					echo RESULT
+					return RESULT != 'SUCCESS';
+				}
+			}
+            steps {
+				sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com './jenkins/jobs/step1.sh'"
+				sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com exit"
+            }
+			post {
+						success {
+							sh "echo DTFILEPP:SUCCESS >> ${env.FILEPATH}/jobFlag.txt"
+						}
+						failure{
+							sh "echo DTFILEPP:FAILURE >> ${env.FILEPATH}/jobFlag.txt"
+						}
+			}		
+        }
+		
+		stage('PARALLEL-POST-DTFILEPP'){
+			parallel{
+				stage ('DTLESTAV'){
+					when {
+						expression {
+							sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLESTAV' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLESTAV"
+							sh "pwd"
+							RESULT=readFile("${FLAGCHECKPATH}/DTLESTAV").trim()
+							echo RESULT
+							return RESULT != 'SUCCESS';
+						}
+					}
+                    steps {
+                        sh "/c/Users/Stuliche/Desktop/JenkinsFile/Pipeline-Automation/scripts/hello.sh"
+                    }
+					post {
+						success {
+							sh "echo DTLESTAV:SUCCESS >> ${env.FILEPATH}/jobFlag.txt"
+						}
+						failure{
+							sh "echo DTLESTAV:FAILURE >> ${env.FILEPATH}/jobFlag.txt"
+						}
+					}	
+                }
+				stage ('DTLEPSKU'){
+					when {
+						expression {
+							sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPSKU' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLEPSKU"
+							sh "pwd"
+							RESULT=readFile("${FLAGCHECKPATH}/DTLEPSKU").trim()
+							echo RESULT
+							return RESULT != 'SUCCESS';
+						}
+					}
+                    steps {
+                        sh "/c/Users/Stuliche/Desktop/JenkinsFile/Pipeline-Automation/scripts/hello.sh"
+                    }
+					post {
+						success {
+							sh "echo DTLEPSKU:SUCCESS >> ${env.FILEPATH}/jobFlag.txt"
+						}
+						failure{
+							sh "echo DTLEPSKU:FAILURE >> ${env.FILEPATH}/jobFlag.txt"
+						}
+					}	
+                }
+				stage ('DTPPEND-BRANCH-1'){
+					//this stage triggers another pipeline for DTLEPSTR-DTLEPRSB parallel build followed by DTLEPRSE //and DTAWPRPS
+                    steps {
+                        sh "/c/Users/Stuliche/Desktop/JenkinsFile/Pipeline-Automation/scripts/hello.sh"
+                    }	
+                }
+			
+			}
+		}
+		
+		
+    }
+}

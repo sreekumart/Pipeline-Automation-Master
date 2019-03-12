@@ -1,0 +1,112 @@
+pipeline{
+	agent any
+	environment {
+		FILEPATH = "/c/Users/Stuliche/Desktop/JenkinsFile/Pipeline-Automation-Master/scripts"
+		//WINDOWSPATH can be commented when used in unix machines.Use a unix equivalent then.
+		FLAGCHECKPATH = "C:/Users/Stuliche/Desktop/JenkinsFile/Pipeline-Automation-Master/scripts"
+		LENA08KEYPATH = "/c/Users/Stuliche/.jenkins/privatekey/secret.key"
+	}
+	stages{
+		parallel{
+			stage('DTLEPSTR'){
+				when {
+					expression {
+						sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPSTR' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLEPSTR"
+						RESULT=readFile("${env.FLAGCHECKPATH}/DTLEPSTR").trim()
+						echo RESULT
+						return RESULT != 'SUCCESS';
+					}
+				}
+				steps {
+						sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com './jenkins/jobs/step1.sh'"
+						sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com exit"
+				}
+				post {
+					success {
+						sh "echo DTLEPSTR:SUCCESS >> ${env.FILEPATH}/jobFlag.txt"
+					}
+					failure{
+						sh "echo DTLEPSTR:FAILURE >> ${env.FILEPATH}/jobFlag.txt"
+					}
+				}
+			}
+		
+		
+			stage('DTLEPRSB'){
+				when {
+					expression {
+						sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPRSB' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLEPRSB"
+						RESULT=readFile("${env.FLAGCHECKPATH}/DTLEPRSB").trim()
+						echo RESULT
+						return RESULT != 'SUCCESS';
+					}
+				}
+				steps {
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com './jenkins/jobs/step1.sh'"
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com exit"
+				}
+				post {
+					success {
+					sh "echo DTLEPRSB:SUCCESS >> ${env.FILEPATH}/jobFlag.txt"
+					}	
+					failure{
+						sh "echo DTLEPRSB:FAILURE >> ${env.FILEPATH}/jobFlag.txt"
+					}
+				}
+			}
+			
+			
+		}
+	
+		
+		stage('DTLEPRSE'){
+				when {
+					expression {
+						sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPRSE' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLEPRSE"
+						RESULT=readFile("${env.FLAGCHECKPATH}/DTLEPRSE").trim()
+						echo RESULT
+						return RESULT != 'SUCCESS';
+					}
+				}
+				steps {
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com './jenkins/jobs/step1.sh'"
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com exit"
+				}
+				post {
+					success {
+					sh "echo DTLEPRSE:SUCCESS >> ${env.FILEPATH}/jobFlag.txt"
+					}	
+					failure{
+						sh "echo DTLEPRSE:FAILURE >> ${env.FILEPATH}/jobFlag.txt"
+					}
+				}
+		}
+		
+		
+		stage('DTAWPRPS'){
+				when {
+					expression {
+						sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTAWPRPS' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/'DTAWPRPS'"
+						RESULT=readFile("${env.FLAGCHECKPATH}/DTAWPRPS").trim()
+						echo RESULT
+						return RESULT != 'SUCCESS';
+					}
+				}
+				steps {
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com './jenkins/jobs/step1.sh'"
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com exit"
+				}
+				post {
+					success {
+					sh "echo DTAWPRPS:SUCCESS >> ${env.FILEPATH}/jobFlag.txt"
+					}	
+					failure{
+						sh "echo DTAWPRPS:FAILURE >> ${env.FILEPATH}/jobFlag.txt"
+					}
+				}
+		}
+		
+		
+	}
+
+}
