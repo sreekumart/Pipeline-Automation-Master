@@ -1,0 +1,93 @@
+pipeline{
+	agent any
+	triggers {
+		upstream 'DTPPEND-BRANCH-2, DTPPEND-BRANCH-3, '
+	}
+	environment {
+		FILEPATH = "/c/Users/Stuliche/Desktop/JenkinsFile/Pipeline-Automation-Master/scripts"
+		//WINDOWSPATH can be commented when used in unix machines.Use a unix equivalent then.
+		FLAGCHECKPATH = "C:/Users/Stuliche/Desktop/JenkinsFile/Pipeline-Automation-Master/scripts"
+		LENA08KEYPATH = "/c/Users/Stuliche/.jenkins/privatekey/secret.key"
+	}
+	stages{
+		stage('PARALLEL-BUILD-DTLEPSTR-DTLEPRSB'){
+		parallel{
+			stage('DTLEPPSB'){
+				when {
+					expression {
+						sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPPSB' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLEPPSB"
+						RESULT=readFile("${env.FLAGCHECKPATH}/DTLEPPSB").trim()
+						echo RESULT
+						return RESULT != 'SUCCESS';
+					}
+				}
+				steps {
+						sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com './jenkins/jobs/step1.sh'"
+						sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com exit"
+				}
+				post {
+					success {
+						sh "echo DTLEPPSB:SUCCESS >> ${env.FILEPATH}/jobFlag.txt"
+					}
+					failure{
+						sh "echo DTLEPPSB:FAILURE >> ${env.FILEPATH}/jobFlag.txt"
+					}
+				}
+			}
+		
+		
+			stage('DTLECDRT'){
+				when {
+					expression {
+						sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLECDRT' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLECDRT"
+						RESULT=readFile("${env.FLAGCHECKPATH}/DTLECDRT").trim()
+						echo RESULT
+						return RESULT != 'SUCCESS';
+					}
+				}
+				steps {
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com './jenkins/jobs/step1.sh'"
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com exit"
+				}
+				post {
+					success {
+					sh "echo DTLECDRT:SUCCESS >> ${env.FILEPATH}/jobFlag.txt"
+					}	
+					failure{
+						sh "echo DTLECDRT:FAILURE >> ${env.FILEPATH}/jobFlag.txt"
+					}
+				}
+			}
+			
+			stage('DTLEPBSN'){
+				when {
+					expression {
+						sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPBSN' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLEPBSN"
+						RESULT=readFile("${env.FLAGCHECKPATH}/DTLEPBSN").trim()
+						echo RESULT
+						return RESULT != 'SUCCESS';
+					}
+				}
+				steps {
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com './jenkins/jobs/step1.sh'"
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com exit"
+				}
+				post {
+					success {
+					sh "echo DTLEPBSN:SUCCESS >> ${env.FILEPATH}/jobFlag.txt"
+					}	
+					failure{
+						sh "echo DTLEPBSN:FAILURE >> ${env.FILEPATH}/jobFlag.txt"
+					}
+				}
+			}
+			
+			
+		}
+		}
+	
+		
+		
+	}
+
+}
