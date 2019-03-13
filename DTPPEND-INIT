@@ -79,7 +79,7 @@ stages{
 				stage ('DTPPEND-BRANCH-1'){
 					//this stage triggers another pipeline for DTLEPSTR-DTLEPRSB parallel build followed by DTLEPRSE //and DTAWPRPS
                     steps {
-                        build (job: 'DTLEPS3F', wait: false,propagate: false)
+                        build (job: 'DTPPEND-BRANCH-1', wait: false,propagate: false)
                     }	
                 }
 			
