@@ -7,6 +7,7 @@ pipeline{
 		LENA08KEYPATH = "/c/Users/Stuliche/.jenkins/privatekey/secret.key"
 	}
 	stages{
+		stage('PARALLEL-BUILD-DTLEPSTR-DTLEPRSB'){
 		parallel{
 			stage('DTLEPSTR'){
 				when {
@@ -56,6 +57,7 @@ pipeline{
 			}
 			
 			
+		}
 		}
 	
 		
