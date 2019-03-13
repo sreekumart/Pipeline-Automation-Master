@@ -235,7 +235,7 @@ stages{
 				steps { 	
 					script {
 						waitUntil {
-							readFile("${FLAGCHECKPATH}/DTLAPTAX").trim() == 'SUCCESS' && readFile("${FLAGCHECKPATH}/DTLEPPRC").trim() == 'SUCCESS')
+							readFile("${FLAGCHECKPATH}/DTLAPTAX").trim() == 'SUCCESS' && readFile("${FLAGCHECKPATH}/DTLEPPRC").trim() == 'SUCCESS'
 						}
 					}
 					build (job: 'DTPPEND-BRANCH-4', wait: false,propagate: false)
