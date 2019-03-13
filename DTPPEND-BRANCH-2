@@ -1,0 +1,59 @@
+pipeline{
+	agent any
+	environment {
+		FILEPATH = "/c/Users/Stuliche/Desktop/JenkinsFile/Pipeline-Automation-Master/scripts"
+		//WINDOWSPATH can be commented when used in unix machines.Use a unix equivalent then.
+		FLAGCHECKPATH = "C:/Users/Stuliche/Desktop/JenkinsFile/Pipeline-Automation-Master/scripts"
+		LENA08KEYPATH = "/c/Users/Stuliche/.jenkins/privatekey/secret.key"
+	}
+	stages{
+		stage('DTLEPLOT'){
+				when {
+					expression {
+						sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPLOT' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLEPLOT"
+						RESULT=readFile("${env.FLAGCHECKPATH}/DTLEPLOT").trim()
+						echo RESULT
+						return RESULT != 'SUCCESS';
+					}
+				}
+				steps {
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com './jenkins/jobs/step1.sh'"
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com exit"
+				}
+				post {
+					success {
+					sh "echo DTLEPLOT:SUCCESS >> ${env.FILEPATH}/jobFlag.txt"
+					}	
+					failure{
+						sh "echo DTLEPLOT:FAILURE >> ${env.FILEPATH}/jobFlag.txt"
+					}
+				}
+		}
+		
+		stage('DTLEPPRC'){
+				when {
+					expression {
+						sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPPRC' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLEPPRC"
+						RESULT=readFile("${env.FLAGCHECKPATH}/DTLEPPRC").trim()
+						echo RESULT
+						return RESULT != 'SUCCESS';
+					}
+				}
+				steps {
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com './jenkins/jobs/step1.sh'"
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com exit"
+				}
+				post {
+					success {
+					sh "echo DTLEPPRC:SUCCESS >> ${env.FILEPATH}/jobFlag.txt"
+					}	
+					failure{
+						sh "echo DTLEPPRC:FAILURE >> ${env.FILEPATH}/jobFlag.txt"
+					}
+				}
+		}
+		
+		
+	}
+
+}

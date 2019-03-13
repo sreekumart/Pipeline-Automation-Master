@@ -188,10 +188,48 @@ stages{
 		
 		}
 		
-		/***stage('PARALLEL-POST-DTLEPREC'){
-			
+		stage('PARALLEL-POST-DTLEPREC'){
+			parallel{
+				stage('DTLEPSEO'){
+					when {
+						expression {
+							sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPSEO' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLEPSEO"
+							sh "pwd"
+							RESULT=readFile("${FLAGCHECKPATH}/DTLEPSEO").trim()
+							echo RESULT
+							return RESULT != 'SUCCESS';
+						}
+					}
+					steps {
+						sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com './jenkins/jobs/step1.sh'"
+						sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com exit"
+					}
+					post {
+						success {
+							sh "echo DTLEPSEO:SUCCESS >> ${env.FILEPATH}/jobFlag.txt"
+						}
+						failure{
+							sh "echo DTLEPSEO:FAILURE >> ${env.FILEPATH}/jobFlag.txt"
+						}
+					}	
 		
-		}***/
+				}
+				stage ('DTPPEND-BRANCH-2'){
+					//this stage triggers another pipeline for DTLEPSTR-DTLEPRSB parallel build followed by DTLEPRSE //and DTAWPRPS
+                    steps {
+                        build (job: 'DTPPEND-BRANCH-2', wait: false,propagate: false)
+                    }	
+                }
+			
+			}
+		}
+		
+		stage('DTPPEND-BRANCH-3'){
+			steps {
+                build (job: 'DTPPEND-BRANCH-3', wait: false,propagate: false)
+            }	
+		
+		}
 		
 		
     }

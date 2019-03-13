@@ -1,0 +1,80 @@
+pipeline{
+	agent any
+	environment {
+		FILEPATH = "/c/Users/Stuliche/Desktop/JenkinsFile/Pipeline-Automation-Master/scripts"
+		//WINDOWSPATH can be commented when used in unix machines.Use a unix equivalent then.
+		FLAGCHECKPATH = "C:/Users/Stuliche/Desktop/JenkinsFile/Pipeline-Automation-Master/scripts"
+		LENA08KEYPATH = "/c/Users/Stuliche/.jenkins/privatekey/secret.key"
+	}
+	stages{
+		stage('DTLEPPAE'){
+				when {
+					expression {
+						sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPPAE' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLEPPAE"
+						RESULT=readFile("${env.FLAGCHECKPATH}/DTLEPPAE").trim()
+						echo RESULT
+						return RESULT != 'SUCCESS';
+					}
+				}
+				steps {
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com './jenkins/jobs/step1.sh'"
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com exit"
+				}
+				post {
+					success {
+					sh "echo DTLEPPAE:SUCCESS >> ${env.FILEPATH}/jobFlag.txt"
+					}	
+					failure{
+						sh "echo DTLEPPAE:FAILURE >> ${env.FILEPATH}/jobFlag.txt"
+					}
+				}
+		}
+		stage('DTLEPPPC'){
+				when {
+					expression {
+						sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPPPC' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLEPPPC"
+						RESULT=readFile("${env.FLAGCHECKPATH}/DTLEPPPC").trim()
+						echo RESULT
+						return RESULT != 'SUCCESS';
+					}
+				}
+				steps {
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com './jenkins/jobs/step1.sh'"
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com exit"
+				}
+				post {
+					success {
+					sh "echo DTLEPPPC:SUCCESS >> ${env.FILEPATH}/jobFlag.txt"
+					}	
+					failure{
+						sh "echo DTLEPPPC:FAILURE >> ${env.FILEPATH}/jobFlag.txt"
+					}
+				}
+		}
+		stage('DTLEPTAX'){
+				when {
+					expression {
+						sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPTAX' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLEPTAX"
+						RESULT=readFile("${env.FLAGCHECKPATH}/DTLEPTAX").trim()
+						echo RESULT
+						return RESULT != 'SUCCESS';
+					}
+				}
+				steps {
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com './jenkins/jobs/step1.sh'"
+					sh "ssh -i ${env.LENA08KEYPATH} akumar39@lena088.jcpenney.com exit"
+				}
+				post {
+					success {
+					sh "echo DTLEPTAX:SUCCESS >> ${env.FILEPATH}/jobFlag.txt"
+					}	
+					failure{
+						sh "echo DTLEPTAX:FAILURE >> ${env.FILEPATH}/jobFlag.txt"
+					}
+				}
+		}
+		
+		
+	}
+
+}
