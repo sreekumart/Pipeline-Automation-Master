@@ -231,6 +231,20 @@ stages{
 		
 		}
 		
+		stage('DTLEPBSN-TRIGGER-CHECK'){
+				waitUntil {					
+						DTLAPTAXRESULT=readFile("${env.FLAGCHECKPATH}/DTLAPTAX").trim()
+						echo DTLAPTAXRESULT
+						DTLEPPRCRESULT=readFile("${env.FLAGCHECKPATH}/DTLEPPRC").trim()
+						echo DTLEPPRCRESULT
+						return (DTLAPTAXRESULT == 'SUCCESS' && DTLEPPRCRESULT == 'SUCCESS');
+				}
+				steps {
+					build (job: 'DTPPEND-BRANCH-3', wait: false,propagate: false)
+				}
+				
+		}
+		
 		
     }
 }
