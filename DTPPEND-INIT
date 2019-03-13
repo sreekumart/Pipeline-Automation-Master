@@ -79,7 +79,7 @@ stages{
 				stage ('DTPPEND-BRANCH-1'){
 					//this stage triggers another pipeline for DTLEPSTR-DTLEPRSB parallel build followed by DTLEPRSE //and DTAWPRPS
                     steps {
-                        sh "/c/Users/Stuliche/Desktop/JenkinsFile/Pipeline-Automation/scripts/hello.sh"
+                        build (job: 'DTLEPS3F', wait: false,propagate: false)
                     }	
                 }
 			
