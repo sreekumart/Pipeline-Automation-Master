@@ -235,11 +235,15 @@ stages{
 				steps { 	
 					script {
 						waitUntil {
-							RESULTDTLEPTAX="";
-							RESULTDTLEPPRC="";
-							sh "${RESULTDTLEPTAX}=\(cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPTAX' | awk -F ':' '{ print \$2 }'\)"
-							sh "${RESULTDTLEPPRC}=\(cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPPRC' | awk -F ':' '{ print \$2 }'\)"
-							RESULTDTLEPTAX == 'SUCCESS' && RESULTDTLEPPRC == 'SUCCESS'
+							sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPTAX' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLEPTAXBSNTRIGGER"
+							DTLEPTAXRESULT=readFile("${FLAGCHECKPATH}/DTLEPTAXBSNTRIGGER").trim()
+							echo DTLEPTAXRESULT
+							sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPPRC' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLEPPRCBSNTRIGGER"
+							DTLEPPRCRESULT=readFile("${FLAGCHECKPATH}/DTLEPPRCBSNTRIGGER").trim()
+							echo DTLEPPRCRESULT
+							
+							DTLEPTAXRESULT == 'SUCCESS' && DTLEPPRCRESULT == 'SUCCESS'
+						
 						}
 						build (job: 'DTPPEND-BRANCH-4', wait: true,propagate: false)
 					}
