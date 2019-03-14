@@ -237,10 +237,9 @@ stages{
 						waitUntil {
 							readFile("${FLAGCHECKPATH}/DTLEPTAX").trim() == 'SUCCESS' && readFile("${FLAGCHECKPATH}/DTLEPPRC").trim() == 'SUCCESS'
 						}
+						build (job: 'DTPPEND-BRANCH-4', wait: true,propagate: false)
 					}
-					build (job: 'DTPPEND-BRANCH-4', wait: false,propagate: false)
-				}
-				
+				}	
 		}
 		
 		
