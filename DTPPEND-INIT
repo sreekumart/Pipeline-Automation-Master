@@ -241,7 +241,6 @@ stages{
 							sh "cat ${env.FILEPATH}/jobFlag.txt | grep 'DTLEPPRC' | awk -F ':' '{ print \$2 }' > ${FLAGCHECKPATH}/DTLEPPRCBSNTRIGGER"
 							DTLEPPRCRESULT=readFile("${FLAGCHECKPATH}/DTLEPPRCBSNTRIGGER").trim()
 							echo DTLEPPRCRESULT
-							
 							DTLEPTAXRESULT == 'SUCCESS' && DTLEPPRCRESULT == 'SUCCESS'
 						
 						}
